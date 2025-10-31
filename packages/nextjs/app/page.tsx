@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
+import { createClient } from "@supabase/supabase-js";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
@@ -8,6 +10,43 @@ import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
+
+  // Prueba de conexión a Supabase
+  useEffect(() => {
+    const testSupabaseConnection = async () => {
+      try {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+        if (!supabaseUrl || !supabaseKey) {
+          console.error("SUPABASE: Variables de entorno no configuradas");
+          console.error("Verifica que NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY estén en .env.local");
+          return;
+        }
+
+        console.log("🔄 SUPABASE: Intentando conectar...");
+
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        // Intentar hacer una consulta simple a la tabla user
+        const { data, error } = await supabase.from("user").select("count", { count: "exact", head: true });
+
+        if (error) {
+          console.error("SUPABASE: Conexión errónea");
+          console.error("Error:", error.message);
+          return;
+        }
+
+        console.log("✅ SUPABASE: Conexión exitosa");
+        console.log("📊 Total de usuarios en la base de datos:", data);
+      } catch (err) {
+        console.error("SUPABASE: Error al conectar");
+        console.error(err);
+      }
+    };
+
+    testSupabaseConnection();
+  }, []);
 
   return (
     <>

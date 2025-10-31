@@ -1,0 +1,10 @@
+Paso 1:Instala todos los paquetes
+yarn install
+
+Paso 2:Genera la clave local cifrada
+yarn generate
+
+Paso 3:Instala paquetes de Supabase
+yarn add @supabase/supabase-js dotenv
+yarn add -D @types/node
+
